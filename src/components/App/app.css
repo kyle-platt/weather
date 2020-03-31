@@ -8,3 +8,34 @@
   font-size: calc(10px + 2vmin);
   color: #ffffff;
 }
+
+.btn {
+  padding: 5px 20px;
+	border-radius: 15px;
+	border-width: 2px;
+	border-style: solid;
+	cursor: pointer;
+  transition: 0.25s ease;
+}
+
+.btn:hover {
+  color: white;
+  background: transparent;
+  border-color: white;
+}
+
+.margin-40 {
+  margin: 40px;
+}
+
+.lrg-text {
+  font-size: calc(30px + 2vmin);
+}
+
+.md-text {
+  font-size: calc(20px + 2vmin);
+}
+
+.current-conditions-icon {
+  width: 80px;
+}
