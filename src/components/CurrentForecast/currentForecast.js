@@ -12,23 +12,37 @@ const CurrentForecast = () => {
     const [location, setLocation] = useState('');
 
     const getCurrentForecast = () => {
-        // Construct url & the params
-        const url = 'http://api.openweathermap.org/data/2.5/weather?';
-        const params = new URLSearchParams();
-        params.append('q', 'ferndale,michigan');
-        params.append('appid', 'e8400ff2f1a43f8026df176847383f7f');
-        params.append('units', 'imperial');
+        // Location is approved
+        const success = (position) => {
+            // Construct openweathermap url & the params
+            const url = 'http://api.openweathermap.org/data/2.5/weather?';
+            const params = new URLSearchParams();
+            params.append('lat', position.coords.latitude);
+            params.append('lon', position.coords.longitude);
+            params.append('appid', 'e8400ff2f1a43f8026df176847383f7f');
+            params.append('units', 'imperial');
+            
+            // Get the current conditions. If successful, set state of needed fields. If error redirect to error page.
+            axios.get(url + params)
+            .then((response) => {
+                const temperature = response?.data?.main?.temp;
+                const unixTimestamp = response?.data?.dt;
+                temperature && setTemp(Math.trunc(temperature));
+                unixTimestamp && setDate(new Date(unixTimestamp * 1000).toDateString());
+                setIconId(_.first(response?.data?.weather)?.icon);
+                setLocation(response?.data?.name);
+            }).catch((error) => {
+                console.log('Sorry, we are having technical difficulties. Please try again or come back later.');
+            });
+        };
 
-        // Get the current conditions. If successful, set state of needed fields. If error redirect to error page.
-        axios.get(url + params)
-        .then((response) => {
-            const temperature = response?.data?.main?.temp;
-            const unixTimestamp = response?.data?.dt;
-            temperature && setTemp(Math.trunc(temperature));
-            unixTimestamp && setDate(new Date(unixTimestamp * 1000).toDateString());
-            setIconId(_.first(response?.data?.weather)?.icon);
-            setLocation(response?.data?.name);
-        });
+        // Location is denied
+        const error = (err) => {
+            alert('You must enable location services.');
+        };
+
+        // Request location access
+        navigator.geolocation.getCurrentPosition(success, error);
     };
     
     useEffect(() => {
